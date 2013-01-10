@@ -1,4 +1,4 @@
-package com.fozzy.apt.plugin;
+package com.fozzy.eclipse.plugin;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
