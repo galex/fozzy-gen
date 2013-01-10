@@ -16,6 +16,7 @@ import com.fozzy.apt.util.ProcessorLogger;
 public class FozzyProcessor extends AbstractProcessor {
 
 	private ProcessorLogger logger;
+	
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -37,7 +38,13 @@ public class FozzyProcessor extends AbstractProcessor {
 			logger.info("AnnotationType interfaces = " + annotationType.getInterfaces());
 			logger.info("AnnotationType simpleName = " + annotationType.getSimpleName());
 			logger.info("AnnotationType getTypeParameters = " + annotationType.getTypeParameters());
+			
+			logger.info("AnnotationType Twice = " + roundEnv.getElementsAnnotatedWith(annotationType));
 
+			// parameters
+			logger.info("AnnotationType enclosing = " + annotationType.getEnclosedElements());
+			
+			
 		}
 
 		return true;
