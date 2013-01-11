@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/fozzy-gen-api"/>
-	<classpathentry kind="lib" path="/fozzy-gen-api/fozzy-api.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="lib" path="lib/fozzy-api.jar"/>
+	<classpathentry kind="lib" path="lib/freemarker-2.3.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

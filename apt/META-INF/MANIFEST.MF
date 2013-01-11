@@ -4,8 +4,10 @@ Bundle-Name: fozzy-gen-apt
 Bundle-SymbolicName: fozzy-gen-apt;singleton:=true
 Bundle-Version: 1.0.0.1
 Bundle-ClassPath: fozzy-gen-apt.jar,
- fozzy-api.jar
+ lib/fozzy-api.jar,
+ lib/freemarker-2.3.6.jar
 Export-Package: com.fozzy.api.annotation,
+ com.fozzy.apt.model,
  com.fozzy.apt.processor,
  com.fozzy.apt.util
 Bundle-ActivationPolicy: lazy
