@@ -7,6 +7,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 
 import com.fozzy.apt.util.ProcessorLogger;
@@ -22,7 +23,7 @@ public class FozzyProcessor extends AbstractProcessor {
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
 		this.logger = new ProcessorLogger(processingEnv.getMessager());
-		logger.info("Running FozzyProcessor...");
+		logger.info("Running FozzyProcessor... Blabla");
 
 		// Exit early if no annotations in this round so we don't overwrite the
 		// env file
@@ -33,15 +34,23 @@ public class FozzyProcessor extends AbstractProcessor {
 		for (TypeElement annotationType : annotations) {
 			
 			logger.info("FozzyProcessor Processing elements with @" + annotationType.getQualifiedName());
-			logger.info("AnnotationType kind = " + annotationType.getKind());
+			logger.info("AnnotationType kind = " + annotationType.getKind().name());
 			logger.info("AnnotationType modifiers = " + annotationType.getModifiers());
 			logger.info("AnnotationType interfaces = " + annotationType.getInterfaces());
 			logger.info("AnnotationType simpleName = " + annotationType.getSimpleName());
 			logger.info("AnnotationType getTypeParameters = " + annotationType.getTypeParameters());
-			
-			logger.info("AnnotationType Twice = " + roundEnv.getElementsAnnotatedWith(annotationType));
+			logger.info("AnnotationType element annotated = " + roundEnv.getElementsAnnotatedWith(annotationType));
 
+			
+			for(Element elem :roundEnv.getElementsAnnotatedWith(annotationType)){
+				
+				logger.info("AnnotationType elem type = " + elem.asType());
+				
+			}
+			
 			// parameters
+			
+			
 			logger.info("AnnotationType enclosing = " + annotationType.getEnclosedElements());
 			
 			

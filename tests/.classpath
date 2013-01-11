@@ -8,5 +8,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/Users/galex/git/fozzy-gen/api/fozzy-api.jar"/>
+	<classpathentry kind="src" path="apt">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

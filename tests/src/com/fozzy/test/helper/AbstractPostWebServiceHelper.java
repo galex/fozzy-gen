@@ -4,12 +4,14 @@ import com.fozzy.api.annotation.WebServiceHelper;
 import com.fozzy.api.annotation.WebServiceMethod;
 import com.fozzy.test.model.Post;
 
-@WebServiceHelper(name="PosterHelper2")
-
-public interface AbstractPostWebServiceHelper {
+@WebServiceHelper(name="PostWebServiceHelper")
+public abstract class AbstractPostWebServiceHelper {
 
 	@WebServiceMethod(url="http://garage.ubiquoid.com/posts.json.php")
-	Post getPost();
+	Post getPost(){
+		
+		return new Post();
+	}
 	
 	//@WebServiceMethod(url="http://garage.ubiquoid.com/posts.json.php")
 	//public abstract List<Post> getPosts();	
