@@ -12,9 +12,8 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.DeclaredType;
 import javax.tools.JavaFileObject;
 
 import com.fozzy.api.annotation.Model;
@@ -22,9 +21,8 @@ import com.fozzy.api.annotation.WebServiceHelper;
 import com.fozzy.api.annotation.WebServiceMethod;
 import com.fozzy.apt.model.ClassModel;
 import com.fozzy.apt.model.Helper;
+import com.fozzy.apt.model.Method;
 import com.fozzy.apt.util.ProcessorLogger;
-import com.fozzy.apt.util.StringUtils;
-import com.sun.tools.javac.code.Type.PackageType;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
@@ -62,50 +60,46 @@ public class FozzyProcessor extends AbstractProcessor {
 
 			WebServiceHelper annotation = element.getAnnotation(WebServiceHelper.class);
 
-			TypeElement typeElement = (TypeElement) element;
+			if (element.getKind() == ElementKind.INTERFACE) {
 
-			if (typeElement.getKind() == ElementKind.INTERFACE) {
-
-				logger.info("typeElement interfaces = " + typeElement.getInterfaces());
-				logger.info("typeElement kind = " + typeElement.getKind());
-				logger.info("typeElement qualified name = " + typeElement.getQualifiedName());
-				logger.info("typeElement nesting kind = " + typeElement.getNestingKind());
-				logger.info("typeElement getEnclosedElements = " + typeElement.getEnclosedElements());
-				logger.info("typeElement getEnclosingElement = " + typeElement.getEnclosingElement());
+				TypeElement typeElement = (TypeElement) element;
 
 				Helper helper = new Helper();
 				helper.setImplementedClassModel(new ClassModel(typeElement.getQualifiedName().toString()));
-				helper.setClassModel(new ClassModel(helper.getImplementedClassModel().getPackageName(), annotation.name()));				
-				helper.getImports().add(helper.getImplementedClassModel().getQualifiedClassName());
+				helper.setClassModel(new ClassModel(helper.getImplementedClassModel().getPackageName(), annotation.name()));
+
+				for(Element childElement : typeElement.getEnclosedElements()){
+					
+					if(childElement.getKind() == ElementKind.METHOD){
+						
+						WebServiceMethod methodAnnotation = childElement.getAnnotation(WebServiceMethod.class);
+						
+						Method method = new Method();
+						method.setUrl(methodAnnotation.url());
+						
+						ExecutableElement executableElement = (ExecutableElement) childElement;
+						method.setReturnType(new ClassModel(executableElement.getReturnType().toString()));
+						method.setName(executableElement.getSimpleName().toString());
+						
+						helper.getMethods().add(method);
+						helper.getImports().add(method.getReturnType().getQualifiedClassName());
+					}
+				}
 				
 				helpers.add(helper);
 			}
 		}
-
-		for (Element element : roundEnv.getElementsAnnotatedWith(WebServiceMethod.class)) {
-			/*
-			 * logger.info("element method = " + element);
-			 * logger.info("element method element.getEnclosedElements() = " +
-			 * element.getEnclosedElements());
-			 * logger.info("element method element.getEnclosingElement() = " +
-			 * element.getEnclosingElement());
-			 * logger.info("element method element.getModifiers() = " +
-			 * element.getModifiers());
-			 * logger.info("element method element.getKind() = " +
-			 * element.getKind()); logger.info("element method simple name = " +
-			 * element.getSimpleName());
-			 * 
-			 * WebServiceMethod annotation =
-			 * element.getAnnotation(WebServiceMethod.class);
-			 * 
-			 * logger.info("element method annotation url = " +
-			 * annotation.url());
-			 * logger.info("element method annotation resId = " +
-			 * annotation.resourceId());
-			 */
-		}
-
+		
 		generateHelpers(helpers);
+		
+		for (Element element : roundEnv.getElementsAnnotatedWith(Model.class)) {
+			
+			if(element.getKind() == ElementKind.CLASS){
+			
+				
+			}
+		}
+		
 		return true;
 	}
 

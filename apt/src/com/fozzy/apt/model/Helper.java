@@ -19,6 +19,7 @@ public class Helper {
 	public Helper() {
 		super();
 		imports = new ArrayList<String>();
+		methods = new ArrayList<Method>();
 	}
 
 	public ArrayList<String> getImports() {

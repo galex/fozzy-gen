@@ -1,16 +1,17 @@
 package com.fozzy.apt.model;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Method {
 
 	private String name;
-	private String returnType;
-	private HashMap<String, String> parametersTypesAndNames;
+	private String url;
+	private ClassModel returnType;
+	private ArrayList<ClassModel> parameters;
 
 	public Method() {
-		
-		
+		super();
+		parameters = new ArrayList<ClassModel>();
 	}
 
 	public String getName() {
@@ -21,20 +22,28 @@ public class Method {
 		this.name = name;
 	}
 
-	public String getReturnType() {
+	public ClassModel getReturnType() {
 		return returnType;
 	}
 
-	public void setReturnType(String returnType) {
+	public void setReturnType(ClassModel returnType) {
 		this.returnType = returnType;
 	}
 
-	public HashMap<String, String> getParametersTypesAndNames() {
-		return parametersTypesAndNames;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setParametersTypesAndNames(HashMap<String, String> parametersTypesAndNames) {
-		this.parametersTypesAndNames = parametersTypesAndNames;
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public ArrayList<ClassModel> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(ArrayList<ClassModel> parameters) {
+		this.parameters = parameters;
 	}
 
 
