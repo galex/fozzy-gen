@@ -18,7 +18,12 @@ public class ${classModelName.className} {
 	public static ${method.returnType.simpleName} ${method.name}() {
 	
 		String url = "${method.url}";
+
+<#if "${method.returnType.simpleName}" == "int">
+		return 0;
+<#else>
 		return null;
+</#if>
 	}
 	
 </#list>  

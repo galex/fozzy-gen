@@ -7,22 +7,22 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
 import com.fozzy.apt.model.ClassModelName;
-import com.fozzy.apt.model.TypeName;
+import com.fozzy.apt.model.TypeNameClass;
 
 public class TypeUtils {
 
-	public static TypeName getTypeName(ProcessorLogger logger, DeclaredType declaredType) {
+	public static TypeNameClass getTypeName(ProcessorLogger logger, DeclaredType declaredType) {
 
 		logger.info("declaredType  = " + declaredType);
 
-		TypeName typeName = new TypeName();
-		typeName.setType(new ClassModelName(extractTypeName(declaredType.toString())));
+		TypeNameClass typeNameClass = new TypeNameClass();
+		typeNameClass.setType(new ClassModelName(extractTypeName(declaredType.toString())));
 
 		logger.info("declaredType parameters = " + declaredType.getTypeArguments());
 
 		if (declaredType.getTypeArguments().size() > 0) {
 			
-			ArrayList<TypeName> parameters = new ArrayList<TypeName>();
+			ArrayList<TypeNameClass> parameters = new ArrayList<TypeNameClass>();
 
 			for (TypeMirror typeMirror : declaredType.getTypeArguments()) {
 
@@ -31,11 +31,25 @@ public class TypeUtils {
 					parameters.add(TypeUtils.getTypeName(logger, (DeclaredType) typeMirror));
 				}
 			}
-			typeName.setParameters(parameters);
+			typeNameClass.setParameters(parameters);
 		}
 
-		return typeName;
+		return typeNameClass;
 	}
+	
+	public static boolean isPrimitive(TypeMirror typeMirror){
+		
+		return typeMirror.getKind() == TypeKind.BOOLEAN || 
+				typeMirror.getKind() == TypeKind.BYTE ||
+				typeMirror.getKind() == TypeKind.CHAR ||
+				typeMirror.getKind() == TypeKind.DOUBLE ||
+				typeMirror.getKind() == TypeKind.FLOAT ||
+				typeMirror.getKind() == TypeKind.INT ||
+				typeMirror.getKind() == TypeKind.LONG ||
+				typeMirror.getKind() == TypeKind.SHORT; 
+	}
+	
+	
 
 	private static String extractTypeName(String completeType) {
 

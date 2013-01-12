@@ -15,6 +15,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.tools.JavaFileObject;
 
@@ -24,6 +25,7 @@ import com.fozzy.api.annotation.WebServiceMethod;
 import com.fozzy.apt.model.ClassModelName;
 import com.fozzy.apt.model.Helper;
 import com.fozzy.apt.model.Method;
+import com.fozzy.apt.model.TypeNamePrimitive;
 import com.fozzy.apt.util.ProcessorLogger;
 import com.fozzy.apt.util.TypeUtils;
 
@@ -82,18 +84,29 @@ public class FozzyProcessor extends AbstractProcessor {
 
 						ExecutableElement executableElement = (ExecutableElement) childElement;
 
+						method.setName(executableElement.getSimpleName().toString());
 						if (executableElement.getReturnType().getKind() == TypeKind.DECLARED) {
 
 							DeclaredType declaredType = (DeclaredType) executableElement.getReturnType();
-
 							method.setReturnType(TypeUtils.getTypeName(logger, declaredType));
-
-							logger.info("method return type  = " + method.getReturnType());
+							helper.getImports().addAll(method.getReturnType().getImports());
+							
+						} else {
+							
+							if(TypeUtils.isPrimitive(executableElement.getReturnType())){
+								
+								PrimitiveType primitive = (PrimitiveType) executableElement.getReturnType();
+								method.setReturnType(new TypeNamePrimitive(primitive.toString()));
+							}
+							
+							logger.info("not DECLARED, type king = " + executableElement.getReturnType().getKind());
 						}
-
-						method.setName(executableElement.getSimpleName().toString());
+						
+						
+						
 						helper.getMethods().add(method);
-						helper.getImports().addAll(method.getReturnType().getImports());
+
+						
 					}
 				}
 				helpers.add(helper);
