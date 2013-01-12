@@ -1,8 +1,8 @@
-package ${classModel.packageName};
+package ${classModelName.packageName};
 
-<#list imports as import>
+<#list listImports as import>
 import ${import};
-</#list>  
+</#list>
 
 /**
  * GENERATED CODE
@@ -12,10 +12,10 @@ import ${import};
  *
  * @author Alexander Gherschon
  */
-public class ${classModel.className} {
+public class ${classModelName.className} {
 
 <#list methods as method>
-	public static ${method.returnType.className} ${method.name}() {
+	public static ${method.returnType.simpleName} ${method.name}() {
 	
 		String url = "${method.url}";
 		return null;

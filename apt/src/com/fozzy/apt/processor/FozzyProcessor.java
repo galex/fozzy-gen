@@ -14,15 +14,18 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.tools.JavaFileObject;
 
 import com.fozzy.api.annotation.Model;
 import com.fozzy.api.annotation.WebServiceHelper;
 import com.fozzy.api.annotation.WebServiceMethod;
-import com.fozzy.apt.model.ClassModel;
+import com.fozzy.apt.model.ClassModelName;
 import com.fozzy.apt.model.Helper;
 import com.fozzy.apt.model.Method;
 import com.fozzy.apt.util.ProcessorLogger;
+import com.fozzy.apt.util.TypeUtils;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
@@ -65,41 +68,60 @@ public class FozzyProcessor extends AbstractProcessor {
 				TypeElement typeElement = (TypeElement) element;
 
 				Helper helper = new Helper();
-				helper.setImplementedClassModel(new ClassModel(typeElement.getQualifiedName().toString()));
-				helper.setClassModel(new ClassModel(helper.getImplementedClassModel().getPackageName(), annotation.name()));
+				helper.setImplementedClassModelName(new ClassModelName(typeElement.getQualifiedName().toString()));
+				helper.setClassModelName(new ClassModelName(helper.getImplementedClassModelName().getPackageName(), annotation.name()));
 
-				for(Element childElement : typeElement.getEnclosedElements()){
-					
-					if(childElement.getKind() == ElementKind.METHOD){
-						
+				for (Element childElement : typeElement.getEnclosedElements()) {
+
+					if (childElement.getKind() == ElementKind.METHOD) {
+
 						WebServiceMethod methodAnnotation = childElement.getAnnotation(WebServiceMethod.class);
-						
+
 						Method method = new Method();
 						method.setUrl(methodAnnotation.url());
-						
+
 						ExecutableElement executableElement = (ExecutableElement) childElement;
-						method.setReturnType(new ClassModel(executableElement.getReturnType().toString()));
+
+						if (executableElement.getReturnType().getKind() == TypeKind.DECLARED) {
+
+							DeclaredType declaredType = (DeclaredType) executableElement.getReturnType();
+
+							method.setReturnType(TypeUtils.getTypeName(logger, declaredType));
+
+							logger.info("method return type  = " + method.getReturnType());
+						}
+
 						method.setName(executableElement.getSimpleName().toString());
-						
 						helper.getMethods().add(method);
-						helper.getImports().add(method.getReturnType().getQualifiedClassName());
+						helper.getImports().addAll(method.getReturnType().getImports());
 					}
 				}
-				
 				helpers.add(helper);
 			}
 		}
-		
+
 		generateHelpers(helpers);
-		
+
 		for (Element element : roundEnv.getElementsAnnotatedWith(Model.class)) {
-			
-			if(element.getKind() == ElementKind.CLASS){
-			
-				
+
+			if (element.getKind() == ElementKind.CLASS) {
+
+				TypeElement typeElement = (TypeElement) element;
+
+				//ClassModelName model = new ClassModelName(typeElement.getQualifiedName().toString());
+
+				for (Element childElement : typeElement.getEnclosedElements()) {
+
+					if (childElement.getKind() == ElementKind.METHOD && childElement.getSimpleName().toString().startsWith("set")) {
+
+						ExecutableElement executableElement = (ExecutableElement) childElement;
+
+						logger.info("got a setter = " + executableElement.getSimpleName());
+					}
+				}
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -113,7 +135,7 @@ public class FozzyProcessor extends AbstractProcessor {
 
 			JavaFileObject file;
 			try {
-				file = processingEnv.getFiler().createSourceFile(helper.getClassModel().getQualifiedClassName());
+				file = processingEnv.getFiler().createSourceFile(helper.getClassModelName().getQualifiedClassName());
 				Writer out = file.openWriter();
 				Template t = cfg.getTemplate(HELPER_TEMPLATE);
 				t.process(helper, out);

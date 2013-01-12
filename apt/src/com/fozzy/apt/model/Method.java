@@ -6,12 +6,12 @@ public class Method {
 
 	private String name;
 	private String url;
-	private ClassModel returnType;
-	private ArrayList<ClassModel> parameters;
+	private TypeName returnType;
+	private ArrayList<ClassModelName> parameters;
 
 	public Method() {
 		super();
-		parameters = new ArrayList<ClassModel>();
+		parameters = new ArrayList<ClassModelName>();
 	}
 
 	public String getName() {
@@ -22,11 +22,11 @@ public class Method {
 		this.name = name;
 	}
 
-	public ClassModel getReturnType() {
+	public TypeName getReturnType() {
 		return returnType;
 	}
 
-	public void setReturnType(ClassModel returnType) {
+	public void setReturnType(TypeName returnType) {
 		this.returnType = returnType;
 	}
 
@@ -38,14 +38,16 @@ public class Method {
 		this.url = url;
 	}
 
-	public ArrayList<ClassModel> getParameters() {
+	public ArrayList<ClassModelName> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(ArrayList<ClassModel> parameters) {
+	public void setParameters(ArrayList<ClassModelName> parameters) {
 		this.parameters = parameters;
 	}
 
-
-
+	@Override
+	public String toString() {
+		return "Method [name=" + name + ", url=" + url + ", returnType=" + returnType + ", parameters=" + parameters + "]";
+	}
 }

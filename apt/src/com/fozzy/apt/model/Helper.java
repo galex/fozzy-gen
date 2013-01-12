@@ -1,6 +1,8 @@
 package com.fozzy.apt.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Gather all the data to generate a helper class
@@ -10,25 +12,34 @@ import java.util.ArrayList;
  */
 public class Helper {
 
-	private ClassModel classModel;
-	private ClassModel implementedClassModel;
+	private ClassModelName classModelName;
+	private ClassModelName implementedClassModel;
 	
-	private ArrayList<String> imports;
+	private HashSet<String> imports;
 	private ArrayList<Method> methods;
 
 	public Helper() {
 		super();
-		imports = new ArrayList<String>();
+		imports = new HashSet<String>();
 		methods = new ArrayList<Method>();
 	}
 
-	public ArrayList<String> getImports() {
+	
+	public HashSet<String> getImports() {
 		return imports;
+	}	
+	
+	public ArrayList<String> getListImports() {
+		
+		ArrayList<String> listImports = new ArrayList<String>();
+		Iterator<String> it = imports.iterator();
+		while(it.hasNext()){
+			listImports.add(it.next());
+		}
+		return listImports;
 	}
 
-	
-
-	public void setImports(ArrayList<String> imports) {
+	public void setImports(HashSet<String> imports) {
 		this.imports = imports;
 	}
 
@@ -40,25 +51,25 @@ public class Helper {
 		this.methods = methods;
 	}
 
-	public ClassModel getClassModel() {
-		return classModel;
+	public ClassModelName getClassModelName() {
+		return classModelName;
 	}
 
-	public void setClassModel(ClassModel helperClassModel) {
-		this.classModel = helperClassModel;
+	public void setClassModelName(ClassModelName helperClassModel) {
+		this.classModelName = helperClassModel;
 	}
 
-	public ClassModel getImplementedClassModel() {
+	public ClassModelName getImplementedClassModelName() {
 		return implementedClassModel;
 	}
 
-	public void setImplementedClassModel(ClassModel implementedClassModel) {
+	public void setImplementedClassModelName(ClassModelName implementedClassModel) {
 		this.implementedClassModel = implementedClassModel;
 	}
 
 	@Override
 	public String toString() {
-		return "Helper [classModel=" + classModel + ", implementedClassModel=" + implementedClassModel + ", imports=" + imports + ", methods=" + methods + "]";
+		return "Helper [classModel=" + classModelName + ", implementedClassModel=" + implementedClassModel + ", imports=" + imports + ", methods=" + methods + "]";
 	}
 
 	
