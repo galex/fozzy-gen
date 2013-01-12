@@ -10,12 +10,10 @@ import java.util.ArrayList;
  */
 public class Helper {
 
-	private String classPackage;
-
-	private String name;
-	private String implementingInterface;
+	private ClassModel classModel;
+	private ClassModel implementedClassModel;
+	
 	private ArrayList<String> imports;
-
 	private ArrayList<Method> methods;
 
 	public Helper() {
@@ -27,21 +25,7 @@ public class Helper {
 		return imports;
 	}
 
-	public String getPackage() {
-		return classPackage;
-	}
-
-	public void setPackage(String classPackage) {
-		this.classPackage = classPackage;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
+	
 
 	public void setImports(ArrayList<String> imports) {
 		this.imports = imports;
@@ -55,17 +39,27 @@ public class Helper {
 		this.methods = methods;
 	}
 
-	public String getImplementingInterface() {
-		return implementingInterface;
+	public ClassModel getClassModel() {
+		return classModel;
 	}
 
-	public void setImplementingInterface(String implementingInterface) {
-		this.implementingInterface = implementingInterface;
+	public void setClassModel(ClassModel helperClassModel) {
+		this.classModel = helperClassModel;
+	}
+
+	public ClassModel getImplementedClassModel() {
+		return implementedClassModel;
+	}
+
+	public void setImplementedClassModel(ClassModel implementedClassModel) {
+		this.implementedClassModel = implementedClassModel;
 	}
 
 	@Override
 	public String toString() {
-		return "Helper [name=" + name + ", implementingInterface=" + implementingInterface + ", packages=" + imports + ", methods=" + methods + "]";
+		return "Helper [classModel=" + classModel + ", implementedClassModel=" + implementedClassModel + ", imports=" + imports + ", methods=" + methods + "]";
 	}
+
+	
 
 }

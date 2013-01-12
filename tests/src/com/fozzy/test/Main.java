@@ -1,6 +1,6 @@
 package com.fozzy.test;
 
-import com.fozzy.test.helper.PostWebServiceHelper;
+import com.fozzy.test.helper.PostHelper;
 import com.fozzy.test.model.Post;
 
 
@@ -13,6 +13,6 @@ public class Main {
 		
 		Post post = new Post(); 
 		
-		System.out.println("Helper = " + PostWebServiceHelper.class);
+		System.out.println("Helper = " + PostHelper.class);
 	}
 }

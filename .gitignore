@@ -2,3 +2,4 @@ api/bin
 apt/bin
 tests/bin
 .DS_Store
+tests/apt

@@ -1,4 +1,4 @@
-package ${package};
+package ${classModel.packageName};
 
 <#list imports as import>
 import ${import};
@@ -11,6 +11,6 @@ import ${import};
  *
  * @author Alexander Gherschon
  */
-public class ${name} implements ${implementingInterface} {
+public class ${classModel.className} implements ${implementedClassModel.className} {
 
 }
