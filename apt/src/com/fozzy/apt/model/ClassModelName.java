@@ -10,11 +10,13 @@ public class ClassModelName {
 
 		int lastDot = qualifiedClassName.lastIndexOf('.');
 		if (lastDot < 1) {
-			throw new IllegalArgumentException("The default package is not allowed for type " + qualifiedClassName);
+			
+			this.className = qualifiedClassName;
+		} else {
+			String pkg = qualifiedClassName.substring(0, lastDot);
+			this.setPackageName(pkg);
+			this.setClassName(qualifiedClassName.substring(lastDot + 1));
 		}
-		String pkg = qualifiedClassName.substring(0, lastDot);
-		this.setPackageName(pkg);
-		this.setClassName(qualifiedClassName.substring(lastDot + 1));
 	}
 	
 	public ClassModelName(String packageName, String className) {
@@ -50,5 +52,10 @@ public class ClassModelName {
 	public boolean equals(Object other) {
 		
 		return (other instanceof ClassModelName && ((ClassModelName) other).getQualifiedClassName() != null && ((ClassModelName) other).getQualifiedClassName().equals(getQualifiedClassName()));
+	}
+	
+	public boolean isPrimitive(){
+		
+		return packageName == null;
 	}
 }

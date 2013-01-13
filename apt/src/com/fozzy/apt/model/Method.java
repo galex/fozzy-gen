@@ -13,6 +13,8 @@ public class Method implements Importable {
 	private UrlFormatType urlFormatType;
 	private TypeName returnType;
 	private ArrayList<ParameterTypeName> parameters;
+	
+	private Parser parser;
 
 	public Method() {
 		super();
@@ -63,6 +65,10 @@ public class Method implements Importable {
 		Set<String> returnTypeImports = getReturnType().getImports();
 		if(returnTypeImports != null) methodImports.addAll(returnTypeImports);
 		
+		if(parser != null){
+			methodImports.add(parser.getClassModelName().getQualifiedClassName());
+		}
+		
 		for(ParameterTypeName param : parameters){
 			
 			Set<String> paramTypeImports = param.getImports();
@@ -78,5 +84,13 @@ public class Method implements Importable {
 
 	public void setUrlFormatType(UrlFormatType urlFormatType) {
 		this.urlFormatType = urlFormatType;
+	}
+
+	public Parser getParser() {
+		return parser;
+	}
+
+	public void setParser(Parser parser) {
+		this.parser = parser;
 	}
 }

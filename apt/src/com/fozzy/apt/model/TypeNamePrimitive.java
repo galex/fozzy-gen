@@ -1,6 +1,9 @@
 package com.fozzy.apt.model;
 
+import java.util.HashSet;
 import java.util.Set;
+
+import com.fozzy.apt.util.TypeUtils;
 
 public class TypeNamePrimitive implements TypeName, Importable {
 
@@ -27,7 +30,18 @@ public class TypeNamePrimitive implements TypeName, Importable {
 
 	@Override
 	public Set<String> getImports() {
-		// no imports to be done when speaking about primitives...
+		
+		if(isPrimitive()){
+			
+			Set<String> imports = new HashSet<String>();
+			
+			System.out.println("packagename = " +TypeUtils.getClassModelName(this).getPackageName());
+			System.out.println("classname = " + TypeUtils.getClassModelName(this).getClassName());
+			
+			imports.add(TypeUtils.getClassModelName(this).getQualifiedClassName());
+			return imports;
+		}
+			
 		return null;
 	}
 
@@ -39,5 +53,11 @@ public class TypeNamePrimitive implements TypeName, Importable {
 	@Override
 	public boolean isPrimitive() {
 		return true;
+	}
+	
+	@Override
+	public String getClassSimpleName() {
+		
+		return TypeUtils.getClassModelName(this).getClassName();
 	}
 }

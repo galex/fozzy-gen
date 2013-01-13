@@ -59,6 +59,20 @@ public class TypeUtils {
 				|| typeMirror.getKind() == TypeKind.LONG || typeMirror.getKind() == TypeKind.SHORT || typeMirror.getKind() == TypeKind.VOID;
 	}
 
+	public static ClassModelName getClassModelName(TypeNamePrimitive primitive){
+		
+		ClassModelName classModelName = null;
+		
+		String prim = primitive.getPrimitive();
+		
+		System.out.println("prim = " + prim);
+		
+		if("int".equals(prim)) classModelName = new ClassModelName(Integer.class.getName());
+		else if("object".equals(prim)) classModelName = new ClassModelName(Object.class.getName());
+		
+		return classModelName;
+	}
+	
 	private static String extractTypeName(String completeType) {
 
 		String typeName = "";

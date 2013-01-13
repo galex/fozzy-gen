@@ -13,6 +13,15 @@ import com.fozzy.api.parser.AbstractJsonParser;
  *
  * @author Alexander Gherschon
  */
-public class ${classModelName.className} extends AbstractJsonParser<${genericType.simpleName}, JSONObject> {
+public class ${classModelName.className} extends AbstractJsonParser<${genericType.classSimpleName}, JSONObject> {
 
+	@Override
+	public ${genericType.classSimpleName} parseJson(JSONObject json) throws Exception {
+	
+<#if "${genericType.classSimpleName}" == "Integer">
+		return new ${genericType.classSimpleName}(0);
+<#else>	
+		return new ${genericType.classSimpleName}();
+</#if>	
+	}
 }

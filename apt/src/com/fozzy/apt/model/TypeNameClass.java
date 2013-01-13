@@ -73,4 +73,10 @@ public class TypeNameClass implements TypeName, Importable {
 	public boolean isPrimitive() {
 		return false;
 	}
+
+	@Override
+	public String getClassSimpleName() {
+		
+		return getSimpleName();
+	}
 }

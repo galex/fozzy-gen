@@ -25,6 +25,7 @@ import com.fozzy.apt.model.Method;
 import com.fozzy.apt.model.ParameterTypeName;
 import com.fozzy.apt.model.Parser;
 import com.fozzy.apt.util.ProcessorLogger;
+import com.fozzy.apt.util.StringUtils;
 import com.fozzy.apt.util.TemplateGenerator;
 import com.fozzy.apt.util.TypeUtils;
 
@@ -123,15 +124,19 @@ public class FozzyProcessor extends AbstractProcessor {
 
 		
 		for (Helper helper : helpers) {
-			TemplateGenerator.generateHelper(logger, processingEnv, cfg, helper);
+			
 			for (Method method : helper.getMethods()) {
 
 				Parser parser = new Parser();
 				parser.setGenericType(method.getReturnType());
 				parser.setUrlFormatType(method.getUrlFormatType());
-				parser.setClassModelName(new ClassModelName(helper.getParserPackageName(), method.getName()));
+				parser.setClassModelName(new ClassModelName(helper.getParserPackageName(), StringUtils.getParserName(method.getName())));
 				TemplateGenerator.generateParser(logger, processingEnv, cfg, parser);
+				// adds the parser reference to the method to be able to use it in the Helper
+				method.setParser(parser);
 			}
+			
+			TemplateGenerator.generateHelper(logger, processingEnv, cfg, helper);
 		}
 		return true;
 	}

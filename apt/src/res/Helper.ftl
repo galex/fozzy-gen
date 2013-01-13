@@ -3,6 +3,8 @@ package ${classModelName.packageName};
 <#list listImports as import>
 import ${import};
 </#list>
+import java.io.IOException;
+import com.fozzy.api.util.HttpUtils;
 
 /**
  * GENERATED CODE
@@ -23,14 +25,19 @@ public class ${classModelName.className} {
 	</#list> 
 	
 	</@compress>) {
-	
-		String url = "${method.url}";
 
-<#if "${method.returnType.simpleName}" == "int">
-		return 0;
-<#else>
-		return null;
-</#if>
+		${method.parser.genericType.classSimpleName} data = null;
+
+		${method.parser.classModelName.className} parser = new ${method.parser.classModelName.className}();
+		try {
+			data = parser.parse(HttpUtils.get("${method.url}"));
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return data;
 	}
 	
 </#list>  

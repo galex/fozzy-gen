@@ -28,7 +28,7 @@ public class Helper implements Importable {
 	
 	public HashSet<String> getImports() {
 		HashSet<String> imports = new HashSet<String>();
-		imports.add(implementedClassModel.getQualifiedClassName());
+		//imports.add(implementedClassModel.getQualifiedClassName());//TODO the helper does not implements any Interface since we want to have static methods
 		for(Method method : methods){
 			imports.addAll(method.getImports());
 		}
