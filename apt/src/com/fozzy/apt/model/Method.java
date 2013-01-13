@@ -1,17 +1,19 @@
 package com.fozzy.apt.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
-public class Method {
+public class Method implements Importable {
 
 	private String name;
 	private String url;
 	private TypeName returnType;
-	private ArrayList<ClassModelName> parameters;
+	private ArrayList<ParameterTypeName> parameters;
 
 	public Method() {
 		super();
-		parameters = new ArrayList<ClassModelName>();
+		parameters = new ArrayList<ParameterTypeName>();
 	}
 
 	public String getName() {
@@ -38,16 +40,32 @@ public class Method {
 		this.url = url;
 	}
 
-	public ArrayList<ClassModelName> getParameters() {
+	public ArrayList<ParameterTypeName> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(ArrayList<ClassModelName> parameters) {
+	public void setParameters(ArrayList<ParameterTypeName> parameters) {
 		this.parameters = parameters;
 	}
 
 	@Override
 	public String toString() {
 		return "Method [name=" + name + ", url=" + url + ", returnType=" + returnType + ", parameters=" + parameters + "]";
+	}
+
+	@Override
+	public Set<String> getImports() {
+		HashSet<String> methodImports = new HashSet<String>();
+		
+		Set<String> returnTypeImports = getReturnType().getImports();
+		if(returnTypeImports != null) methodImports.addAll(returnTypeImports);
+		
+		for(ParameterTypeName param : parameters){
+			
+			Set<String> paramTypeImports = param.getImports();
+			if(paramTypeImports != null) methodImports.addAll(paramTypeImports);
+		}
+		
+		return methodImports;
 	}
 }

@@ -10,37 +10,36 @@ import java.util.Iterator;
  * @author Alexander Gherschon
  * 
  */
-public class Helper {
+public class Helper implements Importable {
 
 	private ClassModelName classModelName;
 	private ClassModelName implementedClassModel;
 	
-	private HashSet<String> imports;
 	private ArrayList<Method> methods;
 
 	public Helper() {
 		super();
-		imports = new HashSet<String>();
 		methods = new ArrayList<Method>();
 	}
 
 	
 	public HashSet<String> getImports() {
+		HashSet<String> imports = new HashSet<String>();
+		for(Method method : methods){
+			imports.addAll(method.getImports());
+		}
 		return imports;
 	}	
 	
+	//TODO freemarker helper, shoudn't be in the model
 	public ArrayList<String> getListImports() {
 		
 		ArrayList<String> listImports = new ArrayList<String>();
-		Iterator<String> it = imports.iterator();
+		Iterator<String> it = getImports().iterator();
 		while(it.hasNext()){
 			listImports.add(it.next());
 		}
 		return listImports;
-	}
-
-	public void setImports(HashSet<String> imports) {
-		this.imports = imports;
 	}
 
 	public ArrayList<Method> getMethods() {
@@ -69,7 +68,7 @@ public class Helper {
 
 	@Override
 	public String toString() {
-		return "Helper [classModel=" + classModelName + ", implementedClassModel=" + implementedClassModel + ", imports=" + imports + ", methods=" + methods + "]";
+		return "Helper [classModel=" + classModelName + ", implementedClassModel=" + implementedClassModel + ", imports=" + getImports() + ", methods=" + methods + "]";
 	}
 
 	

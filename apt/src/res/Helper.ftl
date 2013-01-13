@@ -15,7 +15,14 @@ import ${import};
 public class ${classModelName.className} {
 
 <#list methods as method>
-	public static ${method.returnType.simpleName} ${method.name}() {
+	public static ${method.returnType.simpleName} ${method.name}(<@compress single_line=true>
+	
+	<#list method.parameters as parameter>
+		${parameter.typeName.simpleName} ${parameter.name}
+		<#if (parameter_index+1) < method.parameters?size>,</#if>
+	</#list> 
+	
+	</@compress>) {
 	
 		String url = "${method.url}";
 

@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class TypeNameClass implements TypeName {
+public class TypeNameClass implements TypeName, Importable {
 
 	private List<TypeNameClass> parameters;
 	private ClassModelName type;
@@ -35,6 +35,9 @@ public class TypeNameClass implements TypeName {
 				imports.addAll(parameter.getImports());
 			}
 		}
+		
+		System.out.println(imports);
+		
 		return imports;
 	}
 	

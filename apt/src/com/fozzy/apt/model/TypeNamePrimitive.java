@@ -2,7 +2,7 @@ package com.fozzy.apt.model;
 
 import java.util.Set;
 
-public class TypeNamePrimitive implements TypeName {
+public class TypeNamePrimitive implements TypeName, Importable {
 
 	private String primitive;
 
@@ -27,6 +27,7 @@ public class TypeNamePrimitive implements TypeName {
 
 	@Override
 	public Set<String> getImports() {
+		// no imports to be done when speaking about primitives...
 		return null;
 	}
 
