@@ -6,4 +6,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface DateFormat {
 
+	String format();
 }
