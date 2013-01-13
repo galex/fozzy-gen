@@ -22,5 +22,5 @@ public interface IPostWebServiceHelper {
 	ArrayList<Post> getPosts();
 	
 	@WebServiceMethod(url="http://garage.ubiquoid.com/posts.json.php?date=$s")
-	HashMap<Integer, HashMap<Object, Post>> getPostsByDate(@DateFormat(format = "d/m/Y") Date date);
+	HashMap<Integer, HashMap<Object, Post>> getPostsByDate(@DateFormat(format = "d/m/Y") Date date, int delta);
 }

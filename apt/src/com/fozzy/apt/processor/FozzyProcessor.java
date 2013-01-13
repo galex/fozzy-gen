@@ -2,6 +2,7 @@ package com.fozzy.apt.processor;
 
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -15,9 +16,6 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.PrimitiveType;
-import javax.lang.model.type.TypeKind;
 import javax.tools.JavaFileObject;
 
 import com.fozzy.api.annotation.Model;
@@ -27,8 +25,6 @@ import com.fozzy.apt.model.ClassModelName;
 import com.fozzy.apt.model.Helper;
 import com.fozzy.apt.model.Method;
 import com.fozzy.apt.model.ParameterTypeName;
-import com.fozzy.apt.model.TypeName;
-import com.fozzy.apt.model.TypeNamePrimitive;
 import com.fozzy.apt.util.ProcessorLogger;
 import com.fozzy.apt.util.TypeUtils;
 
@@ -44,7 +40,7 @@ public class FozzyProcessor extends AbstractProcessor {
 	private ProcessorLogger logger;
 
 	private List<Helper> helpers = new ArrayList<Helper>();
-	private List<String> models = new ArrayList<String>();
+	private HashMap<String,List<Method>> models = new HashMap<String,List<Method>>();
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -58,12 +54,7 @@ public class FozzyProcessor extends AbstractProcessor {
 		if (annotations.size() < 1) {
 			return true;
 		}
-
-		for (Element element : roundEnv.getElementsAnnotatedWith(Model.class)) {
-
-			models.add(element.toString());
-		}
-
+	
 		for (Element element : roundEnv.getElementsAnnotatedWith(WebServiceHelper.class)) {
 
 			WebServiceHelper annotation = element.getAnnotation(WebServiceHelper.class);
@@ -84,17 +75,11 @@ public class FozzyProcessor extends AbstractProcessor {
 
 						Method method = new Method();
 						method.setUrl(methodAnnotation.url());
-
 						ExecutableElement executableElement = (ExecutableElement) childElement;
 						method.setName(executableElement.getSimpleName().toString());
-						
-						// RETURN TYPE
-						
 						method.setReturnType(TypeUtils.getTypeName(executableElement.getReturnType()));
-						
-						for(VariableElement variableElement : executableElement.getParameters()){
-														
-							method.getParameters().add(new ParameterTypeName(TypeUtils.getTypeName((DeclaredType) variableElement.asType()), variableElement.toString()));
+						for(VariableElement variableElement : executableElement.getParameters()){							
+							method.getParameters().add(new ParameterTypeName(TypeUtils.getTypeName(variableElement.asType()), variableElement.toString()));
 						}
 						helper.getMethods().add(method);
 					}
@@ -110,15 +95,31 @@ public class FozzyProcessor extends AbstractProcessor {
 			if (element.getKind() == ElementKind.CLASS) {
 
 				TypeElement typeElement = (TypeElement) element;
+				
+				List<Method> methods = new ArrayList<Method>();
+	
 				for (Element childElement : typeElement.getEnclosedElements()) {
 
 					if (childElement.getKind() == ElementKind.METHOD && childElement.getSimpleName().toString().startsWith("set")) {
 
-						//ExecutableElement executableElement = (ExecutableElement) childElement;
+						ExecutableElement executableElement = (ExecutableElement) childElement;						
+						Method method = new Method();
+						method.setName(executableElement.getSimpleName().toString());
+						method.setReturnType(TypeUtils.getTypeName(executableElement.getReturnType()));
+						for(VariableElement variableElement : executableElement.getParameters()){
+														
+							method.getParameters().add(new ParameterTypeName(TypeUtils.getTypeName(variableElement.asType()), variableElement.toString()));
+						}
+						methods.add(method);
+						
 					}
 				}
+				
+				models.put(typeElement.toString(), methods);
 			}
 		}
+		
+		logger.info("models = " + models);
 
 		return true;
 	}

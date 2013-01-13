@@ -46,7 +46,8 @@ public class TypeUtils {
 				typeName = new TypeNamePrimitive(typeMirror.toString());
 			}
 			else {
-				throw new UnsupportedOperationException("Unsupported type ");
+				
+				throw new UnsupportedOperationException("Unsupported type = " + typeMirror.getKind());
 			}
 		}
 		return typeName;
@@ -55,7 +56,7 @@ public class TypeUtils {
 	public static boolean isPrimitive(TypeMirror typeMirror) {
 
 		return typeMirror.getKind() == TypeKind.BOOLEAN || typeMirror.getKind() == TypeKind.BYTE || typeMirror.getKind() == TypeKind.CHAR || typeMirror.getKind() == TypeKind.DOUBLE || typeMirror.getKind() == TypeKind.FLOAT || typeMirror.getKind() == TypeKind.INT
-				|| typeMirror.getKind() == TypeKind.LONG || typeMirror.getKind() == TypeKind.SHORT;
+				|| typeMirror.getKind() == TypeKind.LONG || typeMirror.getKind() == TypeKind.SHORT || typeMirror.getKind() == TypeKind.VOID;
 	}
 
 	private static String extractTypeName(String completeType) {
