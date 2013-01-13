@@ -2,6 +2,7 @@ package com.fozzy.apt.model;
 
 public class ClassModelName {
 
+	private static final String SEPARATOR = ".";
 	private String packageName;
 	private String className;
 	
@@ -42,7 +43,7 @@ public class ClassModelName {
 	
 	public String getQualifiedClassName(){
 		
-		return packageName + "." + className;
+		return packageName + SEPARATOR + className;
 	}
 	
 	@Override

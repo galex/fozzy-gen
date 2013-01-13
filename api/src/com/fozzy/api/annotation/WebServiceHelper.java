@@ -7,4 +7,6 @@ import java.lang.annotation.Target;
 public @interface WebServiceHelper {
 	
 	String name();
+	String helperPackage();
+	String parserPackage();
 }

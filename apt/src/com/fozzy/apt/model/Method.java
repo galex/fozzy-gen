@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fozzy.api.model.UrlFormatType;
+
 public class Method implements Importable {
 
 	private String name;
 	private String url;
+	private UrlFormatType urlFormatType;
 	private TypeName returnType;
 	private ArrayList<ParameterTypeName> parameters;
 
@@ -67,5 +70,13 @@ public class Method implements Importable {
 		}
 		
 		return methodImports;
+	}
+
+	public UrlFormatType getUrlFormatType() {
+		return urlFormatType;
+	}
+
+	public void setUrlFormatType(UrlFormatType urlFormatType) {
+		this.urlFormatType = urlFormatType;
 	}
 }

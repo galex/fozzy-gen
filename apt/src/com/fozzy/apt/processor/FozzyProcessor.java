@@ -1,6 +1,5 @@
 package com.fozzy.apt.processor;
 
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +15,6 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.tools.JavaFileObject;
 
 import com.fozzy.api.annotation.Model;
 import com.fozzy.api.annotation.WebServiceHelper;
@@ -25,12 +23,13 @@ import com.fozzy.apt.model.ClassModelName;
 import com.fozzy.apt.model.Helper;
 import com.fozzy.apt.model.Method;
 import com.fozzy.apt.model.ParameterTypeName;
+import com.fozzy.apt.model.Parser;
 import com.fozzy.apt.util.ProcessorLogger;
+import com.fozzy.apt.util.TemplateGenerator;
 import com.fozzy.apt.util.TypeUtils;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
-import freemarker.template.Template;
 
 @SupportedAnnotationTypes({ "com.fozzy.api.annotation.Model", "com.fozzy.api.annotation.WebServiceHelper", "com.fozzy.api.annotation.WebServiceMethod" })
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
@@ -40,7 +39,7 @@ public class FozzyProcessor extends AbstractProcessor {
 	private ProcessorLogger logger;
 
 	private List<Helper> helpers = new ArrayList<Helper>();
-	private HashMap<String,List<Method>> models = new HashMap<String,List<Method>>();
+	private HashMap<String, List<Method>> models = new HashMap<String, List<Method>>();
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -49,12 +48,10 @@ public class FozzyProcessor extends AbstractProcessor {
 		this.logger = new ProcessorLogger(processingEnv.getMessager());
 		logger.info("Running FozzyProcessor...");
 
-		// Exit early if no annotations in this round so we don't overwrite the
-		// env file
 		if (annotations.size() < 1) {
 			return true;
 		}
-	
+
 		for (Element element : roundEnv.getElementsAnnotatedWith(WebServiceHelper.class)) {
 
 			WebServiceHelper annotation = element.getAnnotation(WebServiceHelper.class);
@@ -65,7 +62,11 @@ public class FozzyProcessor extends AbstractProcessor {
 
 				Helper helper = new Helper();
 				helper.setImplementedClassModelName(new ClassModelName(typeElement.getQualifiedName().toString()));
-				helper.setClassModelName(new ClassModelName(helper.getImplementedClassModelName().getPackageName(), annotation.name()));
+				helper.setClassModelName(new ClassModelName(annotation.helperPackage(), annotation.name()));
+				
+				helper.setHelperPackageName(annotation.helperPackage());
+				helper.setParserPackageName(annotation.parserPackage());
+				
 
 				for (Element childElement : typeElement.getEnclosedElements()) {
 
@@ -75,10 +76,11 @@ public class FozzyProcessor extends AbstractProcessor {
 
 						Method method = new Method();
 						method.setUrl(methodAnnotation.url());
+						method.setUrlFormatType(methodAnnotation.urlFormatType());
 						ExecutableElement executableElement = (ExecutableElement) childElement;
 						method.setName(executableElement.getSimpleName().toString());
 						method.setReturnType(TypeUtils.getTypeName(executableElement.getReturnType()));
-						for(VariableElement variableElement : executableElement.getParameters()){							
+						for (VariableElement variableElement : executableElement.getParameters()) {
 							method.getParameters().add(new ParameterTypeName(TypeUtils.getTypeName(variableElement.asType()), variableElement.toString()));
 						}
 						helper.getMethods().add(method);
@@ -88,61 +90,49 @@ public class FozzyProcessor extends AbstractProcessor {
 			}
 		}
 
-		generateHelpers(helpers);
 
 		for (Element element : roundEnv.getElementsAnnotatedWith(Model.class)) {
 
 			if (element.getKind() == ElementKind.CLASS) {
 
 				TypeElement typeElement = (TypeElement) element;
-				
+
 				List<Method> methods = new ArrayList<Method>();
-	
+
 				for (Element childElement : typeElement.getEnclosedElements()) {
 
 					if (childElement.getKind() == ElementKind.METHOD && childElement.getSimpleName().toString().startsWith("set")) {
 
-						ExecutableElement executableElement = (ExecutableElement) childElement;						
+						ExecutableElement executableElement = (ExecutableElement) childElement;
 						Method method = new Method();
 						method.setName(executableElement.getSimpleName().toString());
 						method.setReturnType(TypeUtils.getTypeName(executableElement.getReturnType()));
-						for(VariableElement variableElement : executableElement.getParameters()){
-														
+						for (VariableElement variableElement : executableElement.getParameters()) {
+
 							method.getParameters().add(new ParameterTypeName(TypeUtils.getTypeName(variableElement.asType()), variableElement.toString()));
 						}
 						methods.add(method);
-						
 					}
 				}
-				
+
 				models.put(typeElement.toString(), methods);
 			}
 		}
-		
 		logger.info("models = " + models);
 
-		return true;
-	}
 
-	private static final String HELPER_TEMPLATE = "Helper.ftl";
-
-	public void generateHelpers(List<Helper> helpers) {
-
+		
 		for (Helper helper : helpers) {
+			TemplateGenerator.generateHelper(logger, processingEnv, cfg, helper);
+			for (Method method : helper.getMethods()) {
 
-			logger.info("Generating helper = " + helper.getClassModelName().getClassName());
-
-			JavaFileObject file;
-			try {
-				file = processingEnv.getFiler().createSourceFile(helper.getClassModelName().getQualifiedClassName());
-				Writer out = file.openWriter();
-				Template t = cfg.getTemplate(HELPER_TEMPLATE);
-				t.process(helper, out);
-				out.flush();
-				out.close();
-			} catch (Exception e) {
-				e.printStackTrace();
+				Parser parser = new Parser();
+				parser.setGenericType(method.getReturnType());
+				parser.setUrlFormatType(method.getUrlFormatType());
+				parser.setClassModelName(new ClassModelName(helper.getParserPackageName(), method.getName()));
+				TemplateGenerator.generateParser(logger, processingEnv, cfg, parser);
 			}
 		}
+		return true;
 	}
 }

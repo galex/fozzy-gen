@@ -12,6 +12,9 @@ import java.util.Iterator;
  */
 public class Helper implements Importable {
 
+	private String helperPackageName;
+	private String parserPackageName;
+	
 	private ClassModelName classModelName;
 	private ClassModelName implementedClassModel;
 	
@@ -25,6 +28,7 @@ public class Helper implements Importable {
 	
 	public HashSet<String> getImports() {
 		HashSet<String> imports = new HashSet<String>();
+		imports.add(implementedClassModel.getQualifiedClassName());
 		for(Method method : methods){
 			imports.addAll(method.getImports());
 		}
@@ -69,6 +73,36 @@ public class Helper implements Importable {
 	@Override
 	public String toString() {
 		return "Helper [classModel=" + classModelName + ", implementedClassModel=" + implementedClassModel + ", imports=" + getImports() + ", methods=" + methods + "]";
+	}
+
+
+	public String getHelperPackageName() {
+		return helperPackageName;
+	}
+
+
+	public void setHelperPackageName(String helperPackageName) {
+		this.helperPackageName = helperPackageName;
+	}
+
+
+	public String getParserPackageName() {
+		return parserPackageName;
+	}
+
+
+	public void setParserPackageName(String parserPackageName) {
+		this.parserPackageName = parserPackageName;
+	}
+
+
+	public ClassModelName getImplementedClassModel() {
+		return implementedClassModel;
+	}
+
+
+	public void setImplementedClassModel(ClassModelName implementedClassModel) {
+		this.implementedClassModel = implementedClassModel;
 	}
 
 	
